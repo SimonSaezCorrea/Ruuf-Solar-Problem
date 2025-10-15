@@ -12,6 +12,41 @@ interface TestData {
   testCases: TestCase[];
 }
 
+function calculateByForm(
+  panelWidth: number,
+  panelHeight: number,
+  roofWidth: number,
+  roofHeight: number
+): number {
+  const filas = Math.floor(roofHeight / panelHeight);
+  const columnas = Math.floor(roofWidth / panelWidth);
+  let totalOrientacion = filas * columnas;
+
+  // Espacio restante en altura alturaRestanteWidth
+  const alturaRestanteHeight = roofWidth % panelWidth;
+  const alturaRestanteWidth = roofHeight % panelHeight;
+
+  // Intentar colocar paneles girados en el espacio restante
+  if (alturaRestanteWidth >= panelWidth) {
+    const filasSobrantes = Math.floor(alturaRestanteWidth / panelWidth);
+    const columnasSobrantes = Math.floor(roofWidth / panelHeight);
+    const totalOrientacionSobrante = filasSobrantes * columnasSobrantes;
+
+    totalOrientacion = totalOrientacion + totalOrientacionSobrante;
+  }
+
+  if (alturaRestanteHeight >= panelWidth) {
+    const filasSobrantes = Math.floor(alturaRestanteHeight / panelWidth);
+    const columnasSobrantes = Math.floor(roofHeight / panelHeight);
+    const totalOrientacionSobrante = filasSobrantes * columnasSobrantes;
+
+    totalOrientacion = totalOrientacion + totalOrientacionSobrante;
+
+  }  
+  
+  return totalOrientacion;
+}
+
 function calculatePanels(
   panelWidth: number,
   panelHeight: number,
@@ -30,62 +65,14 @@ function calculatePanels(
     return 0;
   }
 
-  let maximoPaneles = 0;
+  // Calcular ambas orientaciones y devolver la máxima
+  // Orientación 1: panelWidth x panelHeight (normal)
+  const totalOrientacionNormal = calculateByForm(panelWidth, panelHeight, roofWidth, roofHeight);
 
-  const filas1 = Math.floor(roofHeight / panelHeight);
-  const columnas1 = Math.floor(roofWidth / panelWidth);
-  let totalOrientacion1 = filas1 * columnas1;
+  // Orientación 2: panelHeight x panelWidth (girado)
+  const totalOrientacionGirado = calculateByForm(panelHeight, panelWidth, roofWidth, roofHeight);
 
-  // Espacio restante en altura alturaRestanteWidth
-  const alturaRestanteHeight = roofWidth % panelWidth;
-  const alturaRestanteWidth = roofHeight % panelHeight;
-
-  // Intentar colocar paneles girados en el espacio restante
-  if (alturaRestanteWidth >= panelWidth) {
-    const filas2 = Math.floor(alturaRestanteWidth / panelWidth);
-    const columnas2 = Math.floor(roofWidth / panelHeight);
-    const totalOrientacion2 = filas2 * columnas2;
-
-    totalOrientacion1 = totalOrientacion1 + totalOrientacion2;
-  }
-
-  if (alturaRestanteHeight >= panelWidth) {
-    const filas2 = Math.floor(alturaRestanteHeight / panelWidth);
-    const columnas2 = Math.floor(roofHeight / panelHeight);
-    const totalOrientacion2 = filas2 * columnas2;
-
-    totalOrientacion1 = totalOrientacion1 + totalOrientacion2;
-    
-  }
-
-  maximoPaneles = totalOrientacion1;
-
-  // 🔹 Intentar dividir el techo en franjas verticales
-  const columnas3 = Math.floor(roofHeight / panelWidth);
-  const filas3 = Math.floor(roofWidth / panelHeight);
-  let totalOrientacion3 = filas3 * columnas3;
-  
-  // Espacio restante en altura
-  const alturaRestanteWidth2 = roofWidth % panelHeight;
-  const alturaRestanteHeight2 = roofHeight % panelWidth;
-
-  // Intentar colocar paneles girados en el espacio restante
-  if (alturaRestanteWidth2 >= panelHeight) {
-    const filas4 = Math.floor(alturaRestanteWidth2 / panelHeight);
-    const columnas4 = Math.floor(roofWidth / panelWidth);
-    const totalOrientacion4 = filas4 * columnas4;
-
-    totalOrientacion3 = totalOrientacion3 + totalOrientacion4;
-  }
-  if (alturaRestanteHeight2 >= panelHeight) {
-    const filas4 = Math.floor(alturaRestanteHeight2 / panelHeight);
-    const columnas4 = Math.floor(roofHeight / panelWidth);
-    const totalOrientacion4 = filas4 * columnas4;
-
-    totalOrientacion3 = totalOrientacion3 + totalOrientacion4;
-  }
-
-  maximoPaneles = Math.max(maximoPaneles, totalOrientacion3);
+  const maximoPaneles = Math.max(totalOrientacionNormal, totalOrientacionGirado);
 
   return maximoPaneles;
 }
