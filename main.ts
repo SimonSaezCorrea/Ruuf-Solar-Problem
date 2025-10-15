@@ -20,6 +20,8 @@ function calculateByForm(
 ): number {
   const filas = Math.floor(roofHeight / panelHeight);
   const columnas = Math.floor(roofWidth / panelWidth);
+
+
   let totalOrientacion = filas * columnas;
 
   // Espacio restante en altura alturaRestanteWidth
@@ -35,13 +37,12 @@ function calculateByForm(
     totalOrientacion = totalOrientacion + totalOrientacionSobrante;
   }
 
-  if (alturaRestanteHeight >= panelWidth) {
-    const filasSobrantes = Math.floor(alturaRestanteHeight / panelWidth);
-    const columnasSobrantes = Math.floor(roofHeight / panelHeight);
+  if (alturaRestanteHeight >= panelHeight) {
+    const filasSobrantes = Math.floor(alturaRestanteHeight / panelHeight);
+    const columnasSobrantes = Math.floor(roofHeight / panelWidth);
     const totalOrientacionSobrante = filasSobrantes * columnasSobrantes;
 
     totalOrientacion = totalOrientacion + totalOrientacionSobrante;
-
   }  
   
   return totalOrientacion;
